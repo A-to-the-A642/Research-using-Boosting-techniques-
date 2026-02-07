@@ -29,19 +29,19 @@ cat(paste0(rep("=", 60), collapse = ""), "\n")
 cat("LOADING DATASETS\n")
 cat(paste0(rep("=", 60), collapse = ""), "\n")
 
-# Dataset 1: Original healthcare dataset
-dataset1_path <- "C:/Users/ahmed/Desktop/healthcare-dataset-stroke-data.csv"
+# Dataset 1
+dataset1_path <- "C:/Users/YOURUSERNAME/Desktop/healthcare-dataset-stroke-data.csv"
 dataset1 <- read.csv(dataset1_path)
 cat("Dataset 1 loaded: 'healthcare-dataset-stroke-data.csv'\n")
 cat("  Rows:", nrow(dataset1), "| Columns:", ncol(dataset1), "\n")
 
-# Dataset 2: New brain stroke dataset
-dataset2_path <- "C:/Users/ahmed/Desktop/brain_stroke.csv"
+# Dataset 2
+dataset2_path <- "C:/Users/YOURUSERNAME/Desktop/brain_stroke.csv"
 dataset2 <- read.csv(dataset2_path)
 cat("\nDataset 2 loaded: 'brain_stroke.csv'\n")
 cat("  Rows:", nrow(dataset2), "| Columns:", ncol(dataset2), "\n")
 
-# Let's examine the structure of both datasets
+
 cat("\n")
 cat(paste0(rep("-", 60), collapse = ""), "\n")
 cat("DATASET STRUCTURE\n")
@@ -89,15 +89,14 @@ clean_dataset1 <- function(data) {
   return(data)
 }
 
-# Function to clean Dataset 2 (brain_stroke dataset)
+
 clean_dataset2 <- function(data) {
   cat("\nCleaning Dataset 2...\n")
-  
-  # Check column names to understand structure
+
   cat("  Column names in Dataset 2:\n")
   print(names(data))
   
-  # We need to check if the target variable is named 'stroke' or something else
+  
   # Common alternative names: 'target', 'Stroke', 'brain_stroke'
   target_col <- NULL
   if ("stroke" %in% names(data)) {
@@ -133,7 +132,7 @@ clean_dataset2 <- function(data) {
     }
   }
   
-  # Handle missing values
+  # missing values
   for (col in names(data)) {
     if (is.numeric(data[[col]]) && any(is.na(data[[col]]))) {
       data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
@@ -141,10 +140,10 @@ clean_dataset2 <- function(data) {
     }
   }
   
-  # Ensure stroke is factor
+  # ensure stroke is factor
   data$stroke <- as.factor(data$stroke)
   
-  # Remove any ID-like columns
+ 
   id_like_cols <- names(data)[grepl("id|ID|Id", names(data))]
   if (length(id_like_cols) > 0) {
     data <- data %>% select(-all_of(id_like_cols))
@@ -202,18 +201,17 @@ analyze_dataset <- function(dataset, dataset_name) {
   cat("ANALYZING:", dataset_name, "\n")
   cat(paste0(rep("=", 60), collapse = ""), "\n")
   
-  # Display basic info
+
   cat("\nDataset Information:\n")
   cat("Total samples:", nrow(dataset), "\n")
   cat("Stroke cases:", sum(dataset$stroke == 1), "(", 
       round(mean(dataset$stroke == 1) * 100, 2), "%)\n")
   cat("Features:", paste(names(dataset), collapse = ", "), "\n")
   
-  # Handle class imbalance with oversampling
   stroke_cases <- dataset[dataset$stroke == 1, ]
   non_stroke_cases <- dataset[dataset$stroke == 0, ]
   
-  # Calculate oversample size (make classes more balanced)
+
   oversample_ratio <- 0.5  # Adjust as needed
   oversample_size <- min(nrow(non_stroke_cases) * oversample_ratio, nrow(non_stroke_cases))
   
@@ -231,7 +229,7 @@ analyze_dataset <- function(dataset, dataset_name) {
   cat("  Stroke cases:", sum(balanced_data$stroke == 1), "\n")
   cat("  Non-stroke cases:", sum(balanced_data$stroke == 0), "\n")
   
-  # Split into training and testing (80/20)
+  # SPLIT 80/20
   train_index <- createDataPartition(balanced_data$stroke, p = 0.8, list = FALSE)
   train_data <- balanced_data[train_index, ]
   test_data <- balanced_data[-train_index, ]
@@ -320,10 +318,9 @@ analyze_dataset <- function(dataset, dataset_name) {
       pred_prob <- pred$prob[, 2]
     }
     
-    # Convert to factor with correct levels
     pred_class <- factor(pred_class, levels = c(0, 1))
     
-    # Calculate metrics
+   
     cm <- confusionMatrix(pred_class, test_data$stroke)
     roc_obj <- roc(as.numeric(test_data$stroke) - 1, pred_prob)
     
@@ -368,12 +365,12 @@ cat(paste0(rep("=", 60), collapse = ""), "\n")
 
 all_results <- data.frame()
 
-# Analyze Dataset 1
+# Dataset 1
 cat("\n>>> Starting analysis of Dataset 1...\n")
 results1 <- analyze_dataset(cleaned_data1, "Dataset 1: Healthcare Data")
 all_results <- rbind(all_results, results1)
 
-# Analyze Dataset 2
+# Dataset 2
 cat("\n>>> Starting analysis of Dataset 2...\n")
 results2 <- analyze_dataset(cleaned_data2, "Dataset 2: Brain Stroke Data")
 all_results <- rbind(all_results, results2)
@@ -396,7 +393,7 @@ cat(paste0(rep("-", 70), collapse = ""), "\n")
 cat("STATISTICAL SUMMARY\n")
 cat(paste0(rep("-", 70), collapse = ""), "\n")
 
-# Calculate averages
+# calculate the averages
 avg_performance <- all_results %>%
   group_by(Model) %>%
   summarise(
@@ -469,12 +466,12 @@ cat("SAVING RESULTS TO DESKTOP\n")
 cat(paste0(rep("-", 70), collapse = ""), "\n")
 
 # Save detailed results
-results_path <- "C:/Users/ahmed/Desktop/stroke_two_datasets_results.csv"
+results_path <- "C:/Users/YOURUSER/Desktop/stroke_two_datasets_results.csv"
 write.csv(all_results, results_path, row.names = FALSE)
 cat("✓ Detailed results saved to:", results_path, "\n")
 
 # Save summary statistics
-summary_path <- "C:/Users/ahmed/Desktop/stroke_two_datasets_summary.csv"
+summary_path <- "C:/Users/YOURUSER/Desktop/stroke_two_datasets_summary.csv"
 write.csv(avg_performance, summary_path, row.names = FALSE)
 cat("✓ Summary statistics saved to:", summary_path, "\n")
 
@@ -528,4 +525,5 @@ cat("   - Results validate the approach for clinical stroke prediction\n")
 cat("\n")
 cat(paste0(rep("=", 70), collapse = ""), "\n")
 cat("END OF ANALYSIS\n")
+
 cat(paste0(rep("=", 70), collapse = ""), "\n")
